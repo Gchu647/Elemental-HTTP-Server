@@ -7,30 +7,14 @@ const server = http.createServer( function (request,response) {
    let pathname = request.url;
    let methodname = request.method;
 
-   if(request.url.indexOf('public') < 0) {
+   if(request.url.indexOf('public') < 0) { //Add public to pathname
      pathname = 'public'+ request.url;
    }
    
-   // Print the name of the file for which request is made.
-   console.log('Request for ' + pathname + ' received.');
-   console.log('Method: ', methodname);
+  // Print the name of the file for which request is made.
+  console.log('Request for ' + pathname + ' received.');
+  console.log('Method: ', methodname);
 
-   /*
-  if(methodname === "GET") {
-    fileFetch(pathname, response);
-  } else if(methodname === "POST" && pathname === "public/elements") {
-    let requestBody = "";
-
-    request.on('data', function(chunk) {
-      requestBody += chunk;
-    });
-    
-    // Takes the requestBody information and makes a html file
-    request.on('end', function(){
-      fileCreate(requestBody, response);
-    })
-  }
-  */
   switch(methodname) {
     case('GET'):
       fileFetch(pathname, response);
