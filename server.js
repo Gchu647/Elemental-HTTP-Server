@@ -6,8 +6,6 @@ const querystring = require('querystring');
 const server = http.createServer( function (request,response) {  
    let pathname = request.url;
    let methodname = request.method;
-   let Obj = request.headers;
-   console.log("Method: ", methodname);
 
    if(request.url.indexOf('public') < 0) {
      pathname = '/public'+ request.url;
@@ -28,26 +26,43 @@ const server = http.createServer( function (request,response) {
 
       response.writeHead(505, {'Content-Type': 'text/html'}); // If the server side messed up.
       } else {
-        // send a status head back?
+      //If we have the url we send the url page back to them
       response.writeHead(200, {'Content-Type': 'text/html'});
       response.write(data);
       response.end();
       }
    })
-  } else if(methodname === "POST") {
+  } else if(methodname === "POST" && pathname === "/public/elements") {
     let requestBody = "";
 
     request.on('data', function(chunk) {
       requestBody += chunk;
     });
     
+    // Takes the requestBody information and makes a html file
     request.on('end', function(){
-      elementsObj = querystring.parse(requestBody);
-      console.log("This is request body: ", elementsObj);
-      console.log("type of: ", typeof elementsObj);
-    })
+      postObj = querystring.parse(requestBody);
+      console.log("This is request body: ", postObj);
+      console.log("type of: ", typeof postObj);
 
-     // fs.writeFile
+      let newHTML = `<!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>The Elements - ${postObj.elementName}</title>
+        <link rel="stylesheet" href="/css/styles.css">
+      </head>
+      <body>
+        <h1>${postObj.elementName}</h1>
+        <h2>${postObj.elementSymbol}</h2>
+        <h3>Atomic number ${postObj.elementAtomicNumber}</h3>
+        <p>${postObj.elementDescription}</p>
+        <p><a href="/">back</a></p>
+      </body>
+      </html>`;
+      
+      fs.writeFile(`public/${postObj.elementName}.html`, newHTML, (err) => {if (err) throw err;});
+    })
   }
 });
 
