@@ -3,7 +3,7 @@ var fs = require('fs');
 
 // Create a server
 const server = http.createServer( function (request,response) {  
-   let pathname = request.url;//Its doesn't seem like we need to parse it.
+   let pathname = request.url;
 
    if(request.url.indexOf('public') < 0) {
      pathname = '/public'+ request.url;
@@ -14,11 +14,21 @@ const server = http.createServer( function (request,response) {
 
    //Substr takes off the initial '/'
    fs.readFile(pathname.substr(1),'UTF8', function(err, data){
-      response.end(data);
+     if(err) { //Error is not passing anything back
+      console.log(err);
+
+      fs.readFile('public/404.html','UTF8', function(err, data){
+        // Set head status
+        // If my server is not picking up the 404, send back an 505!
+        response.end(data);
+      })
+     } else {
+      response.write(data);
+      response.end();
+     }
    })
 });
 
 server.listen(8081, 'localhost');
 
-// Console will print the message
 console.log('Server running at http://localhost:8081/');
