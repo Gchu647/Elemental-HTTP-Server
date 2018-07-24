@@ -70,7 +70,7 @@ function fileCreate(body, res) {
   postObj = querystring.parse(body);
   console.log("This is request body: ", postObj);
   console.log("type of: ", typeof postObj);
-      
+
   let newHTML = `<!DOCTYPE html>
   <html lang="en">
   <head>
@@ -87,7 +87,17 @@ function fileCreate(body, res) {
   </body>
   </html>`;
   
-  fs.writeFile(`public/${postObj.elementName}.html`, newHTML, (err) => {if (err) throw err;});
-  res.writeHead(201,{'content-type': 'text/html'}, {'content-length:': newHTML.length});
-  return res.end();
+  //Creates a file if it doesn't exit
+  return fs.writeFile(`public/${postObj.elementName}.html`, newHTML, {flag:'wx'}, (err) => {
+    if(err) {
+      console.log("file exists!");
+      res.writeHead(404,{'content-type': 'text/html'});
+      return res.end();
+    } else {
+      res.writeHead(201,{'content-type': 'text/html'}, {'content-length:': newHTML.length});
+      console.log("created file");
+      return res.end();
+    }
+  });
+
 }
