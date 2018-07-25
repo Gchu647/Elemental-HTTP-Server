@@ -50,7 +50,7 @@ console.log('Server running at http://localhost:8081/');
 
 // This function fetch file for the 'GET' method
 function fileFetch(path, res) {
-  return fs.readFile(path, 'UTF8', function(err, data) { // Function within a function needs to be returned
+  return fs.readFile(path, 'UTF8', function(err, data) { // This returns stops the function right there.
     if(err) {
       return fileFetch('public/404.html', res);
     }
